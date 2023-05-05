@@ -208,7 +208,7 @@ export const jsonGenerator = new Blockly.Generator('JSON');
 
 ### Generate code
 
-Next, let's hook up the new generator with the sample app. First, we'll remove the old code that imports the new block generator properties and assigns them to the `javascriptGenerator`. Remove these lines from `src/index.js`:
+Next, hook up the new generator with the sample app. First, remove the old code that imports the new block generator properties and assigns them to the `javascriptGenerator`. Remove these lines from `src/index.js`:
 
 ```js
 // Remove these lines!
@@ -219,13 +219,13 @@ import {javascriptGenerator} from 'blockly/javascript';
 Object.assign(javascriptGenerator, generator);
 ```
 
-Then, we need to import the new generator:
+Now import the new generator:
 
 ```js
 import {jsonGenerator} from './generators/json';
 ```
 
-Next, we need to change the output of the sample app. Currently, there are two panels in the app next to the workspace. One shows the generated JavaScript code, and one executes it. We need to change it to show the generated JSON code instead of JavaScript. And since we can't execute JSON, we will leave the bottom panel blank and not show anything there. Change the `runCode` function to match the following:
+Currently, there are two panels in the app next to the workspace. One shows the generated JavaScript code, and one executes it. The one panel showing the generated Javascript code will be changed to show the generated JSON code instead. Since JSON can't be directly executed, the panel that shows the execution will be left blank. Change the `runCode` function to the following:
 
 ```js
 // This function resets the code div and shows the
@@ -236,24 +236,24 @@ const runCode = () => {
 };
 ```
 
-Since we are not modifying the bottom panel, you can also delete this line:
+Since the bottom panel is not being modified, delete this line:
 
 ```js
 // Remove this line!
 const outputDiv = document.getElementById('output');
 ```
 
-After we define the block generators, we'll automatically show the generated code in the top left panel. Refresh the sample app page to see your changes so far.
+The generated code will now be shown automatically in the top left panel. Refresh the sample app page to see the changes so far.
 
 ### Test it
 
-Put a number block on the workspace and check the generator output area. It's empty, so let's check the console. You should see an error:
+Put a number block on the workspace and check the generator output area. It's empty, so check the console. You should see an error:
 
 ```
 Language "JSON" does not know how to generate code for block type "math_number".
 ```
 
-This error occurs because you need to write a block generator for each type of block. Read the next section for more details.
+This error occurs because there has to be a block generator for each type of block. Read the next section for more details.
 
 ## Block generator overview
 
@@ -264,7 +264,7 @@ Block generators are defined on the language generator object. For instance, her
 ```js
 sampleGenerator['sample_block'] = function(block) {
   return 'my code string';
-}
+};
 ```
 
 ### Statement blocks
@@ -278,7 +278,7 @@ For example, this code defines a block generator that always returns the same fu
 ```js
 sampleGenerator['left_turn_block'] = function(block) {
   return 'turnLeft()';
-}
+};
 ```
 
 ### Value blocks
@@ -292,7 +292,7 @@ For example, this code defines a block generator that always returns `1 + 1`:
 ```js
 sampleGenerator['two_block'] = function(block) {
   return ['1 + 1', sampleGenerator.ORDER_ADDITION];
-}
+};
 ```
 
 ### Operator precedence
@@ -303,9 +303,9 @@ Operator precedence rules determine how the correct order of operations is maint
 
 --> Read more about [operator precedence in Blockly](https://developers.google.com/blockly/guides/create-custom-blocks/operator-precedence).
 
-Since JSON does not allow values that are expressions, you do not need to consider operator precedence for the generator that you are building in this codelab. You can use the same value everywhere a precedence value is required. In this case, we'll call it `PRECEDENCE`.
+Since JSON does not allow values that are expressions, the code does not need to consider operator precedence for the generator being built in this codelab. The same value can be used everywhere a precedence value is required. In this codelab, use `PRECEDENCE`.
 
-You need to be able to access this value inside your block generators, so add `PRECEDENCE` to your language generator:
+Since the code needs to be able to access this value inside the block generators, add `PRECEDENCE` to the language generator:
 
 ```js
 jsonGenerator.PRECEDENCE = 0;
@@ -313,9 +313,9 @@ jsonGenerator.PRECEDENCE = 0;
 
 ## Value block generators
 
-In this step you will build the generators for the simple value blocks: `logic_null`, `text`, `math_number`, and `logic_boolean`.
+This step will build the generators for the simple value blocks: `logic_null`, `text`, `math_number`, and `logic_boolean`.
 
-You will use `getFieldValue` on several types of fields.
+It will use `getFieldValue` on several types of fields.
 
 ### Null
 
@@ -360,9 +360,9 @@ The `math_number` block has a number field.
 
 ![The number block has an input for a user to type a number](./number_block.png)
 
-Like the `text` block, you can use `getFieldValue`. Unlike the text block, you don't need to wrap it in additional quotation marks, because in the JSON code, it won't be a string.
+Like the `text` block, you can use `getFieldValue`. Unlike the text block, the function doesn't need to wrap it in additional quotation marks, because in the JSON code, it won't be a string.
 
-However, like all generated code and as with `null` above, we need to return the code as a string from the generator.
+However, like all generated code and as with `null` above, the function needs to return the code as a string from the generator.
 
 ```js
 jsonGenerator['math_number'] = function(block) {
@@ -396,7 +396,7 @@ jsonGenerator['logic_boolean'] = function(block) {
 
 ## Member block generator
 
-In this step you will build the generator for the `member` block. You will use `getFieldValue`, and add `valueToCode` to your tool kit.
+This step will build the generator for the `member` block. It will use the function `getFieldValue`, and introduce the function `valueToCode`.
 
 The member block has a text input field and a value input.
 
@@ -405,16 +405,16 @@ The member block has a text input field and a value input.
 The generated code looks like `"property name": "property value"`.
 
 ### Field value
-The property name is the value of the text input, which we get with `getFieldValue`:
+The **property name** is the value of the text input, which is fetched via `getFieldValue`:
 
 ```js
- const name = block.getFieldValue('MEMBER_NAME');
+const name = block.getFieldValue('MEMBER_NAME');
 ```
 
-Remember that in `src/blocks/json.js` we defined this block to have a text input field called `MEMBER_NAME` - that's the field whose value we're getting here.
+Recall: the name of the value being fetched is `MEMBER_NAME` because that is how it was defined in `src/blocks/json.js`.
 
 ### Input value
-The property value is whatever is attached to the value input. A variety of blocks could be attached there:  `logic_null`, `text`, `math_number`, `logic_boolean`, or even an array (`lists_create_with`). Use `valueToCode` to get the correct value:
+The **property value** is whatever is attached to the value input. A variety of blocks could be attached there:  `logic_null`, `text`, `math_number`, `logic_boolean`, or even an array (`lists_create_with`). Use `valueToCode` to get the correct value:
 
 ```js
 const value = jsonGenerator.valueToCode(block, 'MEMBER_VALUE',
