@@ -31,13 +31,13 @@ You will build a JSON generator that implements the [JSON language spec](https:/
 
 ## Setup
 
-In this codelab you will add code to the Blockly sample app to create and use a new generator.
+This codelab will demonstrate how to add code to the Blockly sample app to create and use a new generator.
 
 ### The application
 
-You will use the (`npx @blockly/create-package app`)[https://www.npmjs.com/package/@blockly/create-package) command to create a standalone application that contains a sample setup of Blockly, including custom blocks and a display of the generated code and output.
-  1. Run `npx @blockly/create-package app custom-generator-codelab`.  This will create your blockly application in the folder `custom-generator-codelab`.
-  1. `cd` into your new directory: `cd custom-generator-codelab`.
+Use the (`npx @blockly/create-package app`)[https://www.npmjs.com/package/@blockly/create-package) command to create a standalone application that contains a sample setup of Blockly, including custom blocks and a display of the generated code and output.
+  1. Run `npx @blockly/create-package app custom-generator-codelab`.  This will create a blockly application in the folder `custom-generator-codelab`.
+  1. `cd` into the new directory: `cd custom-generator-codelab`.
   1. Run `npm start` to start the server and run the sample application.
   1. The sample app will automatically run in the browser window that opens.
 
@@ -54,7 +54,7 @@ const storageKey = 'jsonGeneratorWorkspace';
 
 ### Blocks
 
-For this codelab you will use two custom blocks, as well as five blocks from Blockly's standard set.
+This codelab will use two custom blocks, as well as five blocks from Blockly's standard set.
 
 The custom blocks represent the *Object* and *Member* sections of the JSON specification.
 
@@ -128,7 +128,7 @@ and add the import for the new blocks:
 import {blocks} from './blocks/json';
 ```
 
-Later in this file, we register the block definitions with Blockly (this code is already present and you do not need to add it):
+Later in the file the block definitions are registered with Blockly (this code is already present and does not need to be added):
 
 ```js
 Blockly.common.defineBlocks(blocks);
@@ -178,7 +178,7 @@ export const toolbox = {
 
 Our `index.js` file already handles importing the toolbox and using it in Blockly.
 
-If the server is already running, you can refresh the page to see your changes. Otherwise, run `npm start` to start the server. You should see the new blocks in the toolbox, like this:
+If the server is already running, refresh the page to see changes. Otherwise, run `npm start` to start the server. New blocks should now exist in the toolbox, like this:
 
 ![Screenshot of toolbox showing our added blocks, including the new member and object blocks, plus the built-in number, text, boolean, null, and list blocks.](./toolbox_blocks.png)
 
@@ -186,7 +186,7 @@ The app is still trying to generate and run JavaScript for the workspace, instea
 
 ## The basics
 
-A *language generator* defines basic properties of your language, such as how indentation works. *Block generators* define how individual blocks are turned into code, and must be defined for every block you use.
+A *language generator* defines the basic properties of a language, such as how indentation works. *Block generators* define how individual blocks are turned into code, and must be defined for every block used.
 
 A language generator has a single entry point: `workspaceToCode`. This function takes in a workspace and:
 - Initializes the generator and any necessary state by calling `init`.
@@ -196,9 +196,9 @@ A language generator has a single entry point: `workspaceToCode`. This function 
 
 ### Create your language generator
 
-The first step is to define and call your language generator.
+The first step is to define and call the custom language generator.
 
-A custom language generator is simply an instance of `Blockly.Generator`. Create a new file `src/generators/json.js`. In it, import Blockly, call the `Blockly.Generator` constructor, passing in your generator's name, and store the result.
+A custom language generator is simply an instance of `Blockly.Generator`. Create a new file `src/generators/json.js`. In it, import Blockly and call the `Blockly.Generator` constructor, passing in the generator's name and storing the result.
 
 ```js
 import * as Blockly from 'blockly';
